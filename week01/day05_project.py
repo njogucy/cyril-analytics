@@ -43,10 +43,10 @@ def average_score(student_list):
 
 #top student function
 def top_student(student_list):
- top = {}
+ top = student_list[0]
  for s in student_list:
-  if s['score'] == max('score'):
-   top.append(s['name'])
+  if s['score'] > top['score']:
+   top = s
  return top
  
 
@@ -74,7 +74,8 @@ for year, names in result.items():
 print(average_score(students))
 
 #print top student's name and score
-print(f'Top student:'); top_student(students)
+top = top_student(students)
+print (f"Top Student: {top['name']} with score {top['score']}")
 
 #print all year 3 students
 result = group_by_year(students)
