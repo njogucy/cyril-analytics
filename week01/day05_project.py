@@ -64,9 +64,9 @@ result = group_by_year(students)
 for year, names in result.items():
  print(f'Year{year}:{names}')
 
- #print a full report
- def print_report(student_list):
-  for s in student_list:
+#print a full report
+def print_report(student_list):
+ for s in student_list:
    grade = get_grade(s['score'])
    print (f"{s['name']:<18} | {s['county']:<8} | {s['score']} | {grade}")
 
