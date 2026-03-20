@@ -70,28 +70,21 @@ rows = cursor.fetchall()
 for name, conty, score in rows:
  print (f'{name} | {county} | {score}')
 
-#Exercise 5:Query a view
-#Your database contains a view called v_course_stats that shows course, enrolled count, average score, top score, and performance_rating for each course. Write a script that queries this view and prints a formatted report
 
-cursor.execute('SELECT course, enrolled, avg_score, top_score, performance_rating FROM v_course_stats ORDER BY avg_score DESC')
-rows = cursor.fetchall()
-
-for course, enrolled, avg, top, rating in rows:
- print(f'{course} | {enrolled} students | avg: {avg} | {rating}')
 
 #Exercise 6: Soft delete and verify
 #Write a script that soft-deletes all students with a score below 60 (sets is_deleted = 1 for each one), commits the change, then prints a before and after count to confirm the operation worked.
 
-cursor.execute('SELECT COUNT(*) FROM students WHERE is_deleted = 0')
+cursor.execute('select count(*) from students where is_deleted = 0')
 before = cursor.fetchone()[0]
 print(f'Before: {before} active students')
 
-cursor.execute('UPDATE students SET is_deleted = 1 WHERE score < 60 AND is_deleted = 0')
+cursor.execute('UPDATE students SET is_deleted = 1 where score < 60 and is_deleted = 0')
 conn.commit()
 
 print(f'Soft deleted {cursor.rowcount} student(s) with score below 60')
 
-cursor.execute('SELECT COUNT(*) FROM students WHERE is_deleted = 0')
+cursor.execute('select count(*) from students where is_deleted = 0')
 after = cursor.fetchone()[0]
 print(f'After: {after} active students')
 
@@ -115,7 +108,7 @@ def get_grade(score):
 conn = sqlite3.connect('/home/njogu/cyril-analytics/week01/practice.db')
 cursor = conn.cursor()
 
-cursor.execute('SELECT name, county, course, score FROM students WHERE is_deleted = 0 ORDER BY score DESC')
+cursor.execute('select name, county, course, score from students where is_deleted = 0 order by score desc')
 rows = cursor.fetchall()
 
 scores = [r[3] for r in rows]
@@ -126,33 +119,9 @@ print('-' * 70)
 for rank, (name, county, course, score) in enumerate(rows, 1):
  grade = get_grade(score)
  standing = 'Above average' if score >= avg else 'Below average'
+
  print(f'{rank} | {name} | {county} | {score} | {grade} | {standing}')
- print()
- print(f'Group average: {avg}')
-
-#Exercise 8:County Summary From Python
-#Without using GROUP BY in SQL, write a Python script that builds a county summary using only a plain SELECT to retrieve all students, then uses Python dictionaries to calculate: total students per county, average score per county, and the top scorer per county. Print the summary sorted by average score descending.
-
-import sqlite3
-conn = sqlite3.connect('/home/njogu/cyril-analytics/week01/practice.db')
-cursor = conn.cursor()
-
-cursor.execute('SELECT name, county, score FROM students WHERE is_deleted = 0')
-rows = cursor.fetchall()
+print()
+print(f'Group average: {avg}')
 
 conn.close()
-
-# Build county data using dictionaries
-county_data = {}
-for name, county, score in rows:
- if county not in county_data:
-  county_data[county] = {'scores': [], 'top_name': name, 'top_score': score}
-  county_data[county]['scores'].append(score)
- 
- if score > county_data[county]['top_score']:
-  county_data[county]['top_name'] = name
-  county_data[county]['top_score'] = score
-
-# Calculate averages
-for county in county_data:
- sc = county_data[county]['scores']
